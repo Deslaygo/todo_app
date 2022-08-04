@@ -1,0 +1,5 @@
+{
+    "API_URL":"https://firestore.googleapis.com",
+    "BASE_PATH":"/v1/projects/applaudo-todo-app/databases/(default)/documents",
+    "API_KEY":"AIzaSyAFZ2uyHiPuQQi_4wf8cUQpdMEMqGapq_Q"
+}
