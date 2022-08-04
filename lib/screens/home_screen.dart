@@ -50,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = taskController.tasks.value;
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: null,
@@ -100,16 +99,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: Theme.of(context).textTheme.headline2,
                         ),
                         ListView.builder(
+                            padding: const EdgeInsets.only(top: 32, bottom: 32),
                             shrinkWrap: true,
-                            itemCount: tasks.length,
+                            itemCount: taskController.tasksIncomplete.length,
                             itemBuilder: (context, i) {
-                              return Text('${tasks[i].fields!.name}');
+                              final task = taskController.tasksIncomplete[i];
+                              return TaskItem(
+                                task: task,
+                              );
                             }),
-                        SizedBox(height: 32),
                         Text(
                           'Completed',
                           style: Theme.of(context).textTheme.headline2,
                         ),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: taskController.tasksCompleted.length,
+                            itemBuilder: (context, i) {
+                              final task = taskController.tasksCompleted[i];
+                              return TaskItem(
+                                task: task,
+                              );
+                            }),
                       ],
                     ),
                   );
