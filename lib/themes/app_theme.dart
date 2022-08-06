@@ -26,6 +26,10 @@ class AppTheme {
             color: textColor,
           ),
         ),
+        headline3: GoogleFonts.inter(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
         bodyText1: GoogleFonts?.inter(
           textStyle: TextStyle(
             fontSize: 14,

@@ -91,25 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           SizedBox(height: 16),
-                          SafeArea(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  currentDate,
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                                CircleAvatar(
-                                  backgroundColor: Colors.grey[100],
-                                  radius: 32,
-                                  child: Image.asset(
-                                    AppAssets.defaultUser,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                          HeaderHome(currentDate: currentDate),
                           Text(
                             '${taskController.tasksIncomplete.length} incomplete, ${taskController.tasksCompleted.length} completed',
                             style: Theme.of(context).textTheme.bodyText1,
@@ -130,9 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: taskController.tasksIncomplete.length,
                               itemBuilder: (context, i) {
                                 final task = taskController.tasksIncomplete[i];
-                                return TaskItem(
-                                  task: task,
-                                );
+                                return TaskItem(task: task);
                               }),
                           Text(
                             'Completed',
@@ -144,13 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: taskController.tasksCompleted.length,
                               itemBuilder: (context, i) {
                                 final task = taskController.tasksCompleted[i];
-                                return TaskItem(
-                                  task: task,
-                                );
+                                return TaskItem(task: task);
                               }),
-                          SizedBox(
-                            height: 24,
-                          )
+                          SizedBox(height: 24),
                         ],
                       ),
                     ),

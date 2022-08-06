@@ -3,14 +3,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/controllers/app_controller.dart';
 import 'package:todo_app/controllers/categoy_controller.dart';
 import 'package:todo_app/controllers/task_controller.dart';
 import 'package:todo_app/themes/color_palette.dart';
 import 'package:todo_app/utils/utils.dart';
-import 'package:todo_app/widgest/widgets.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({Key? key}) : super(key: key);
@@ -29,13 +27,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   DateTime? selectedDate;
   final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   int selectedCategory = 0;
+  final _form = GlobalKey<FormState>();
 
   @override
   void didChangeDependencies() async {
     if (_isInit) {
       _isInit = false;
       final arguments = Get.arguments as Map<String, dynamic>;
-      updateDate(arguments['date'].toString());
+      _updateDate(arguments['date'].toString());
     }
     super.didChangeDependencies();
   }
@@ -47,10 +46,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         firstDate: DateTime.now().subtract(Duration(days: 15)),
         lastDate: DateTime(2200));
 
-    if (pickedDate != null) updateDate(pickedDate.toIso8601String());
+    if (pickedDate != null) _updateDate(pickedDate.toIso8601String());
   }
 
-  updateDate(String date) {
+  _updateDate(String date) {
     selectedDate = DateTime.parse(date);
     dateTxt.text = dateFormat.format(selectedDate!);
     setState(() {});
@@ -73,7 +72,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             ));
   }
 
-  Future<void> addTask() async {
+  void _saveForm() => _form.currentState?.save();
+
+  Future<void> _addTask() async {
     final appController = Get.find<AppController>();
     try {
       appController.loading(true);
@@ -102,7 +103,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         leadingWidth: 155,
         leading: Row(
@@ -117,9 +118,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             ),
             Text(
               'To go back',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText2
+              style: context.textTheme.bodyText2
                   ?.copyWith(color: Theme.of(context).primaryColor),
             )
           ],
@@ -130,52 +129,56 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           builder: (controller) {
             return Padding(
               padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'New Task',
-                    style: context.textTheme.headline1?.copyWith(fontSize: 32),
-                  ),
-                  TextFormField(
-                    controller: titleTxt,
-                    decoration: Utils.getInputDecoration(hintText: 'Title'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: categoryTxt,
-                    readOnly: true,
-                    onTap: () => _showDialog(
-                      CupertinoPicker(
-                        magnification: 1.22,
-                        squeeze: 1.2,
-                        useMagnifier: true,
-                        itemExtent: 32.0,
-                        // This is called when selected item is changed.
-                        onSelectedItemChanged: (int selectedItem) {
-                          setState(() {
-                            selectedCategory = selectedItem;
-                          });
-                          categoryTxt.text = categoryController
-                                  .categories[selectedItem].fields?.name ??
-                              '';
-                        },
-                        children: List<Widget>.generate(
-                            categoryController.categories.length, (int index) {
-                          return Center(
-                            child: Text(
-                              categoryController
-                                      .categories[index].fields!.name ??
-                                  '',
-                            ),
-                          );
-                        }),
-                      ),
+              child: Form(
+                key: _form,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'New Task',
+                      style:
+                          context.textTheme.headline1?.copyWith(fontSize: 32),
                     ),
-                    decoration: Utils.getInputDecoration(hintText: 'Category'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
+                    TextFormField(
+                      controller: titleTxt,
+                      decoration: Utils.getInputDecoration(hintText: 'Title'),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: categoryTxt,
+                      readOnly: true,
+                      onTap: () => _showDialog(
+                        CupertinoPicker(
+                          magnification: 1.22,
+                          squeeze: 1.2,
+                          useMagnifier: true,
+                          itemExtent: 32.0,
+                          onSelectedItemChanged: (int selectedItem) {
+                            selectedCategory = selectedItem;
+                            setState(() {});
+                            categoryTxt.text = categoryController
+                                    .categories[selectedItem].fields?.name ??
+                                '';
+                          },
+                          children: List<Widget>.generate(
+                              categoryController.categories.length,
+                              (int index) {
+                            return Center(
+                              child: Text(
+                                categoryController
+                                        .categories[index].fields!.name ??
+                                    '',
+                                style: context.textTheme.bodyText1,
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                      decoration:
+                          Utils.getInputDecoration(hintText: 'Category'),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
                       controller: dateTxt,
                       readOnly: true,
                       onTap: () => _selectDate(context),
@@ -185,34 +188,36 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           Icons.event,
                           color: primaryColor,
                         ),
-                      )),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Container(
-                      width: 95,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading
-                            ? null
-                            : () {
-                                addTask();
-                              },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).primaryColor),
-                          elevation: MaterialStateProperty.all(0),
-                        ),
-                        child: Text(
-                          'Add',
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Container(
+                        width: 95,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: controller.isLoading
+                              ? null
+                              : () {
+                                  if (_form.currentState!.validate()) {
+                                    _saveForm();
+                                    _addTask();
+                                  }
+                                },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Theme.of(context).primaryColor),
+                            elevation: MaterialStateProperty.all(0),
+                          ),
+                          child: Text(
+                            'Add',
+                            style: context.textTheme.headline3,
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             );
           }),
