@@ -8,5 +8,6 @@ class Routes {
     }
   }
 
+  static const homeScreen = '/home';
   static const addTaskScreen = '/add-task';
 }
