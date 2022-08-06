@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-
 class CategoryFields {
   String? color;
   String? name;
@@ -15,7 +13,7 @@ class CategoryFields {
       );
 
   Map<String, dynamic> toJson() => {
-        'color': color,
-        'name': name,
+        'color': {'stringValue': color},
+        'name': {'stringValue': name},
       };
 }
