@@ -139,14 +139,27 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       style:
                           context.textTheme.headline1?.copyWith(fontSize: 32),
                     ),
+                    const SizedBox(height: 24),
                     TextFormField(
                       controller: titleTxt,
                       decoration: Utils.getInputDecoration(hintText: 'Title'),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Title is required';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: categoryTxt,
                       readOnly: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Categoty is required';
+                        }
+                        return null;
+                      },
                       onTap: () => _showDialog(
                         CupertinoPicker(
                           magnification: 1.22,
@@ -211,7 +224,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           ),
                           child: Text(
                             'Add',
-                            style: context.textTheme.headline3,
+                            style: context.textTheme.headline3
+                                ?.copyWith(color: backgroundColor),
                           ),
                         ),
                       ),

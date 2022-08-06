@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Todo App',
+      title: 'ToDo',
       home: HomeScreen(),
       theme: AppTheme.getAppTheme(),
       defaultTransition: Transition.rightToLeft,
