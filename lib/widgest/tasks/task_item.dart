@@ -23,8 +23,9 @@ class TaskItem extends StatelessWidget {
         '${task?.fields?.name}',
         style: Theme.of(context).textTheme.bodyText1,
       ),
-      subtitle: Row(
-        children: <Widget>[Icon(Icons.money)],
+      subtitle: Text(
+        task?.category?.fields?.name ?? '',
+        style: Theme.of(context).textTheme.bodyText2,
       ),
       onChanged: (value) {
         task?.fields?.isCompleted = value;
